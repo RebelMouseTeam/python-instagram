@@ -110,17 +110,6 @@ def bind_method(**config):
         def _build_pagination_info(self, content_obj):
             """Extract pagination information in the desired format."""
             pagination = content_obj.get('pagination') or {}
-            # prepare it for signed requests turned on
-            if pagination.get('next_url'):
-                parsed_url = urlparse.urlparse(pagination.get('next_url'))
-                new_params = urlparse.parse_qs(parsed_url.query)
-                try:
-                    del new_params['sig']
-                    del new_params['access_token']
-                except KeyError:
-                    pass
-                else:
-                    pagination['next_url'] = OAuth2Request(self.api).url_for_get(self.path, new_params)
             if self.pagination_format == 'next_url':
                 return pagination.get('next_url')
             if self.pagination_format == 'dict':
